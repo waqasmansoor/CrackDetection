@@ -1,0 +1,7 @@
+
+train: ./UWDataset/URPC2019/train.txt  # 3765 images
+val: ./UWDataset/URPC2019/valid.txt  # 942 images
+test: ./UWDataset/URPC2019/test.txt   # same as val
+
+nc: 5
+names: ['echinus','starfish','holothurian', 'scallop', 'waterweeds']
