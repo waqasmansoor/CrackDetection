@@ -1,3 +1,5 @@
+# An Improved YOLOv5 Underwater Detector Based on an Attention Mechanism and Multi-Branch Reparameterization Module
+This repository contains the code for the paper: [An Improved YOLOv5 Underwater Detector Based on an Attention Mechanism and Multi-Branch Reparameterization Module](https://www.mdpi.com/2079-9292/12/12/2597).
 ## Datasets 
 **URPC2019**: [Google Drive](https://drive.google.com/file/d/1DV1I5NNy0xGD7V9uGeQoOMF2wivX_e-Z/view?usp=share_link)
 ## Model
