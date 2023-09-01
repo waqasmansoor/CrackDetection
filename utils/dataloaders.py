@@ -100,7 +100,7 @@ def seed_worker(worker_id):
     random.seed(worker_seed)
 
 
-def create_dataloader(path,
+def create_dataloader(path,lbl_path,
                       imgsz,
                       batch_size,
                       stride,
@@ -122,7 +122,7 @@ def create_dataloader(path,
         shuffle = False
     with torch_distributed_zero_first(rank):  # init dataset *.cache only once if DDP
         dataset = LoadImagesAndLabels(
-            path,
+            path,lbl_path,
             imgsz,
             batch_size,
             augment=augment,  # augmentation
@@ -425,9 +425,11 @@ class LoadStreams:
         return len(self.sources)  # 1E12 frames = 32 streams at 30 FPS for 30 years
 
 
-def img2label_paths(img_paths):
+def img2label_paths(img_paths):#,lbl_path=""):
     # Define label paths as a function of image paths
     sa, sb = f'{os.sep}images{os.sep}', f'{os.sep}labels{os.sep}'  # /images/, /labels/ substrings
+    #sa = lbl_path.replace("/",os.sep)
+    # return [sa + os.sep + x.rsplit(os.sep,1)[-1].rsplit(".",1)[0] + ".txt" for x in img_paths]
     return [sb.join(x.rsplit(sa, 1)).rsplit('.', 1)[0] + '.txt' for x in img_paths]
 
 
@@ -437,7 +439,7 @@ class LoadImagesAndLabels(Dataset):
     rand_interp_methods = [cv2.INTER_NEAREST, cv2.INTER_LINEAR, cv2.INTER_CUBIC, cv2.INTER_AREA, cv2.INTER_LANCZOS4]
 
     def __init__(self,
-                 path,
+                 path,#lbl_path,
                  img_size=640,
                  batch_size=16,
                  augment=False,
@@ -466,7 +468,8 @@ class LoadImagesAndLabels(Dataset):
             for p in path if isinstance(path, list) else [path]:
                 p = Path(p)  # os-agnostic
                 if p.is_dir():  # dir
-                    f += glob.glob(str(p / '**' / '*.*'), recursive=True)
+                    #f += glob.glob(str(p / '**' / '*.*'), recursive=True)
+                    f += glob.glob(str(p / '*.*'), recursive=True)
                     # f = list(p.rglob('*.*'))  # pathlib
                 elif p.is_file():  # file
                     with open(p) as t:
@@ -483,7 +486,7 @@ class LoadImagesAndLabels(Dataset):
             raise Exception(f'{prefix}Error loading data from {path}: {e}\n{HELP_URL}') from e
 
         # Check cache
-        self.label_files = img2label_paths(self.im_files)  # labels
+        self.label_files = img2label_paths(self.im_files)#,lbl_path)  # labels
         cache_path = (p if p.is_file() else Path(self.label_files[0]).parent).with_suffix('.cache')
         try:
             cache, exists = np.load(cache_path, allow_pickle=True).item(), True  # load dict
@@ -509,7 +512,7 @@ class LoadImagesAndLabels(Dataset):
         self.labels = list(labels)
         self.shapes = np.array(shapes)
         self.im_files = list(cache.keys())  # update
-        self.label_files = img2label_paths(cache.keys())  # update
+        self.label_files = img2label_paths(cache.keys())#,lbl_path)  # update
 
         # Filter images
         if min_items:

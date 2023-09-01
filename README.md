@@ -8,6 +8,10 @@ This repository contains the code for the paper: [An Improved YOLOv5 Underwater 
 ```angular2html
 python train.py --cfg model/urpc_s.yaml --data data/URPC2019 --hyp data/hyps/hyp.urpc.yaml --batch-size 8 --name UWDetector
 ```
+## Training CrackTree260
+```angular2html
+python train.py --cfg models/urpc_s.yaml --data data/crack260.yaml  --hyp data/hyps/hyp.urpc.yaml --batch-size 8 --name cracktree260
+```
 
 ## Convert
 To fuse fusion block

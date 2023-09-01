@@ -882,7 +882,7 @@ class GAMAttention(nn.Module):
     # https://paperswithcode.com/paper/global-attention-mechanism-retain-information
     def __init__(self, c1, c2, group=True, rate=4):
         super(GAMAttention, self).__init__()
-
+        print("...........................................",c1,c2)
         self.channel_attention = nn.Sequential(
             nn.Linear(c1, int(c1 / rate)),
             nn.ReLU(inplace=True),
@@ -902,8 +902,12 @@ class GAMAttention(nn.Module):
 
     def forward(self, x):
         b, c, h, w = x.shape
+        
         x_permute = x.permute(0, 2, 3, 1).view(b, -1, c)
-        x_att_permute = self.channel_attention(x_permute).view(b, h, w, c)
+        
+        x_att_permute = self.channel_attention(x_permute)
+        
+        x_att_permute=x_att_permute.view(b,h,w,c)
         x_channel_att = x_att_permute.permute(0, 3, 1, 2)
         x = x * x_channel_att
 
