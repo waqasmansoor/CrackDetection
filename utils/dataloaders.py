@@ -100,7 +100,7 @@ def seed_worker(worker_id):
     random.seed(worker_seed)
 
 
-def create_dataloader(path,lbl_path,
+def create_dataloader(path,#lbl_path,
                       imgsz,
                       batch_size,
                       stride,
@@ -122,7 +122,7 @@ def create_dataloader(path,lbl_path,
         shuffle = False
     with torch_distributed_zero_first(rank):  # init dataset *.cache only once if DDP
         dataset = LoadImagesAndLabels(
-            path,lbl_path,
+            path,#lbl_path,
             imgsz,
             batch_size,
             augment=augment,  # augmentation
