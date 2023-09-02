@@ -7,7 +7,7 @@ import time
 from copy import deepcopy
 from pathlib import Path
 from threading import Thread
-import val
+# import val
 import numpy as np
 import torch.distributed as dist
 import torch.nn as nn
@@ -420,7 +420,7 @@ def train(hyp, opt, device, tb_writer=None):
             final_epoch = epoch + 1 == epochs
             if not opt.notest or final_epoch:  # Calculate mAP
                 wandb_logger.current_epoch = epoch + 1
-                results, maps, times = val.run(data_dict,
+                results, maps, times = test.test(data_dict,
                                                  batch_size=batch_size * 2,
                                                  imgsz=imgsz_test,
                                                  model=ema.ema,
@@ -431,7 +431,8 @@ def train(hyp, opt, device, tb_writer=None):
                                                  plots=plots and final_epoch,
                                                  wandb_logger=wandb_logger,
                                                  compute_loss=compute_loss,
-                                                 is_coco=is_coco)
+                                                 is_coco=is_coco,
+                                                 v5_metric=opt.v5_metric)
 
             # Write
             with open(results_file, 'a') as f:
@@ -499,7 +500,7 @@ def train(hyp, opt, device, tb_writer=None):
         logger.info('%g epochs completed in %.3f hours.\n' % (epoch - start_epoch + 1, (time.time() - t0) / 3600))
         if opt.data.endswith('coco.yaml') and nc == 80:  # if COCO
             for m in (last, best) if best.exists() else (last):  # speed, mAP tests
-                results, _, _ = val.run(opt.data,
+                results, _, _ = test.test(opt.data,
                                           batch_size=batch_size * 2,
                                           imgsz=imgsz_test,
                                           conf_thres=0.001,
@@ -510,7 +511,8 @@ def train(hyp, opt, device, tb_writer=None):
                                           save_dir=save_dir,
                                           save_json=True,
                                           plots=False,
-                                          is_coco=is_coco)
+                                          is_coco=is_coco,
+                                          v5_metric=opt.v5_metric)
 
         # Strip optimizers
         final = best if best.exists() else last  # final model

@@ -623,8 +623,10 @@ class Model(nn.Module):
         else:  # is *.yaml
             import yaml  # for torch hub
             self.yaml_file = Path(cfg).name
-            with open(cfg) as f:
-                self.yaml = yaml.load(f, Loader=yaml.SafeLoader)  # model dict
+            with open(cfg, encoding='ascii', errors='ignore') as f:
+                self.yaml = yaml.safe_load(f)  # model dict
+            # with open(cfg) as f:
+            #     self.yaml = yaml.load(f, Loader=yaml.SafeLoader)  # model dict
 
         # Define model
         ch = self.yaml['ch'] = self.yaml.get('ch', ch)  # input channels
