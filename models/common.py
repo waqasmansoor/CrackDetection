@@ -2096,7 +2096,7 @@ class ACmix(nn.Module):
         # ### att
         # ## positional encoding
         # pe = self.conv_p(position(h, w, x.is_cuda))
-        
+        x = x.half()
         pe = self.conv_p(position(h, w,x.is_cuda))
 
         q_att = q.view(b * self.head, self.head_dim, h, w) * scaling
