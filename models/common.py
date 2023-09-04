@@ -2088,6 +2088,7 @@ class ACmix(nn.Module):
         self.dep_conv.bias = init_rate_0(self.dep_conv.bias)
 
     def forward(self, x):
+        x = x.half()
         q, k, v = self.conv1(x), self.conv2(x), self.conv3(x)
         scaling = float(self.head_dim) ** -0.5
         b, c, h, w = q.shape
@@ -2096,7 +2097,7 @@ class ACmix(nn.Module):
         # ### att
         # ## positional encoding
         # pe = self.conv_p(position(h, w, x.is_cuda))
-        x = x.half()
+        
         pe = self.conv_p(position(h, w,x.is_cuda))
 
         q_att = q.view(b * self.head, self.head_dim, h, w) * scaling
