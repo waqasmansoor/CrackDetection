@@ -2020,8 +2020,10 @@ class ST2CSPC(nn.Module):
 #ACmix
 def position(H, W, is_cuda=True):
     if is_cuda:
-        loc_w = torch.linspace(-1.0, 1.0, W).cuda().unsqueeze(0).repeat(H, 1)
-        loc_h = torch.linspace(-1.0, 1.0, H).cuda().unsqueeze(1).repeat(1, W)
+        # loc_w = torch.linspace(-1.0, 1.0, W).cuda().unsqueeze(0).repeat(H, 1)
+        # loc_h = torch.linspace(-1.0, 1.0, H).cuda().unsqueeze(1).repeat(1, W)
+        loc_w = torch.linspace(-1.0, 1.0, W,device='cuda').unsqueeze(0).repeat(H, 1)
+        loc_h = torch.linspace(-1.0, 1.0, H,device='cuda').unsqueeze(1).repeat(1, W)
     else:
         loc_w = torch.linspace(-1.0, 1.0, W).unsqueeze(0).repeat(H, 1)
         loc_h = torch.linspace(-1.0, 1.0, H).unsqueeze(1).repeat(1, W)
@@ -2095,7 +2097,7 @@ class ACmix(nn.Module):
         # ## positional encoding
         # pe = self.conv_p(position(h, w, x.is_cuda))
         
-        pe = self.conv_p(position(h, w,False))
+        pe = self.conv_p(position(h, w,True))
 
         q_att = q.view(b * self.head, self.head_dim, h, w) * scaling
         k_att = k.view(b * self.head, self.head_dim, h, w)
