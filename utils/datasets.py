@@ -65,8 +65,6 @@ def exif_size(img):
 def create_dataloader(path, imgsz, batch_size, stride, opt, hyp=None, augment=False, cache=False, pad=0.0, rect=False,
                       rank=-1, world_size=1, workers=8, image_weights=False, quad=False, prefix=''):
     # Make sure only the first process in DDP process the dataset first, and the following others can use the cache
-    print("rect",rect)
-    print("image weights",image_weights)
     with torch_distributed_zero_first(rank):
         dataset = LoadImagesAndLabels(path, imgsz, batch_size,
                                       augment=augment,  # augment images
@@ -539,7 +537,6 @@ class LoadImagesAndLabels(Dataset):  # for training/testing
         hyp = self.hyp
         mosaic = self.mosaic and random.random() < hyp['mosaic']
         if mosaic:
-            print(".............. MOSAIC .............")
             # Load mosaic
             if random.random() < 0.8:
                 img, labels = load_mosaic(self, index)
@@ -573,7 +570,6 @@ class LoadImagesAndLabels(Dataset):  # for training/testing
         if self.augment:
             # Augment imagespace
             if not mosaic:
-                print("................ Random Perspective ...........")
                 img, labels = random_perspective(img, labels,
                                                  degrees=hyp['degrees'],
                                                  translate=hyp['translate'],
@@ -1025,7 +1021,8 @@ def random_perspective(img, targets=(), segments=(), degrees=10, translate=.1, s
 
     height = img.shape[0] + border[0] * 2  # shape(h,w,c)
     width = img.shape[1] + border[1] * 2
-
+    print('height',height)
+    print('width',width)
     # Center
     C = np.eye(3)
     C[0, 2] = -img.shape[1] / 2  # x translation (pixels)
