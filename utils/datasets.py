@@ -1021,8 +1021,7 @@ def random_perspective(img, targets=(), segments=(), degrees=10, translate=.1, s
 
     height = img.shape[0] + border[0] * 2  # shape(h,w,c)
     width = img.shape[1] + border[1] * 2
-    print('height',height)
-    print('width',width)
+    
     # Center
     C = np.eye(3)
     C[0, 2] = -img.shape[1] / 2  # x translation (pixels)
