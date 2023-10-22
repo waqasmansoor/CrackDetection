@@ -362,7 +362,7 @@ class LoadImagesAndLabels(Dataset):  # for training/testing
         self.mosaic_border = [-img_size // 2, -img_size // 2]
         self.stride = stride
         self.path = path        
-        # self.albumentations = Albumentations() if augment else None
+        self.albumentations = Albumentations() if augment else None
 
         try:
             f = []  # image files
@@ -578,7 +578,7 @@ class LoadImagesAndLabels(Dataset):  # for training/testing
                                                  perspective=hyp['perspective'])
             
             
-            # img, labels = self.albumentations(img, labels)
+            img, labels = self.albumentations(img, labels)
 
             # Augment colorspace
             augment_hsv(img, hgain=hyp['hsv_h'], sgain=hyp['hsv_s'], vgain=hyp['hsv_v'])
@@ -1225,10 +1225,10 @@ class Albumentations:
             A.CLAHE(p=0.01),
             A.RandomBrightnessContrast(brightness_limit=0.2, contrast_limit=0.2, p=0.01),
             A.RandomGamma(gamma_limit=[80, 120], p=0.01),
-            # A.Blur(p=0.01),
-            # A.MedianBlur(p=0.01),
+            A.Blur(p=0.01),
+            A.MedianBlur(p=0.01),
             A.ToGray(p=0.01),
-            # A.ImageCompression(quality_lower=75, p=0.01),
+            A.ImageCompression(quality_lower=75, p=0.01),
             ],
             bbox_params=A.BboxParams(format='pascal_voc', label_fields=['class_labels']))
 
