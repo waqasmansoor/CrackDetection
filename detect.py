@@ -119,7 +119,7 @@ def detect(save_img=False):
 
                 # Write results
                 imname=0
-                for *xyxy, conf, cls in enumerate(reversed(det)):
+                for *xyxy, conf, cls in reversed(det):
                     if save_txt:  # Write to file
                         xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
                         line = (cls, *xywh, conf) if opt.save_conf else (cls, *xywh)  # label format
